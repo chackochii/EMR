@@ -2,7 +2,7 @@
 
 Base URL: `http://localhost:5000/api/v1`. All endpoints except `/auth/login`, `/auth/refresh` and `/health` need `Authorization: Bearer <accessToken>`.
 
-Roles: `super_admin`, `receptionist`, `doctor`. Dates are `YYYY-MM-DD`, times `HH:mm` (24h, server local time).
+Roles: `super_admin`, `receptionist`, `doctor`. Dates are `YYYY-MM-DD`, times `HH:mm` (24h, clinic time zone from the `TZ` setting).
 
 ## Response format
 

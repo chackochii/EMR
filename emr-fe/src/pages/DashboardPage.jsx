@@ -13,7 +13,6 @@ import { useFetch } from '../hooks/useFetch';
 import { dashboardService } from '../services/dashboardService';
 import { APPOINTMENT_STATUS, APPOINTMENT_STATUS_LABELS } from '../constants/statuses';
 import { ROUTES } from '../constants/routes';
-import { ROLES } from '../constants/roles';
 import { formatLongDate, todayISO } from '../utils/date';
 
 const greeting = () => {
@@ -26,6 +25,7 @@ export default function DashboardPage() {
   const { user, can } = useAuth();
   const fetcher = useCallback((signal) => dashboardService.stats(signal), []);
   const { data: stats, loading, error, reload } = useFetch(fetcher);
+  const showDoctorLoad = can('DOCTOR_LOAD');
 
   const renderStats = () => {
     if (loading) {
@@ -51,8 +51,8 @@ export default function DashboardPage() {
           />
           <StatCard label="Total appointments" value={stats.total} tone="neutral" icon="list" />
         </div>
-        <div className={`dash-grid ${user.role !== ROLES.DOCTOR ? 'dash-grid--two' : ''}`}>
-          {user.role !== ROLES.DOCTOR && (
+        <div className={`dash-grid ${showDoctorLoad ? 'dash-grid--two' : ''}`}>
+          {showDoctorLoad && (
             <section className="card">
               <div className="card__head">
                 <h2 className="card__title">Today by doctor</h2>

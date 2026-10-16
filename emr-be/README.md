@@ -68,6 +68,7 @@ See `.env.example` (a local `.env` with dev-only secrets is git-ignored).
 | `BODY_LIMIT` | 100kb | |
 | `RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX` | 15 min, 600 | global limiter |
 | `RATE_LIMIT_LOGIN_WINDOW_MS`, `RATE_LIMIT_LOGIN_MAX` | 15 min, 10 | failed-login limiter |
+| `TZ` | host time zone; **required in production** | clinic time zone (IANA, case-sensitive, e.g. `Asia/Kolkata`); decides "today" and past slots. An unknown name is rejected at boot instead of silently becoming UTC |
 
 ## Install and run
 
@@ -78,7 +79,7 @@ npm run seed                  # needs a running MongoDB
 npm run dev                   # node --watch server.js   (or: npm start)
 ```
 
-Docker: `JWT_ACCESS_SECRET=... JWT_REFRESH_SECRET=... docker compose up --build` (API on :5000, MongoDB on :27017), then `docker compose exec api node seeders/seed.js`.
+Docker: `JWT_ACCESS_SECRET=... JWT_REFRESH_SECRET=... docker compose up --build` (API on :5000, MongoDB on :27017), then `docker compose exec api node seeders/seed.js`. The API container uses `TZ=Asia/Kolkata` unless you pass another `TZ`.
 
 Tests:
 
@@ -99,7 +100,7 @@ Departments: Cardiology, Orthopedics, Pediatrics, General Medicine. Doctors work
 
 ## Assumptions
 
-- Timezone: dates/times are clinic-local wall-clock values; "past" and "today" use the server's local time.
+- Timezone: dates/times are clinic-local wall-clock values; "past" and "today" use the clinic time zone set by `TZ` (one time zone per deployment).
 - Doctor identity everywhere is `Doctor._id`; the login response and token carry `doctorId` for doctor users.
 - A new patient is reused only on exact mobile + name (case-insensitive) match; otherwise a new patient is created.
 - Arrival can only be marked on the appointment date; cancellation only from `scheduled`.

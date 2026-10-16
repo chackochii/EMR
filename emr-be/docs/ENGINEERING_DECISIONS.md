@@ -19,7 +19,7 @@ Other decisions:
 - **Stateless access tokens** (JWT, 15 min) carry `{sub, role, doctorId}`, so authorisation needs no DB hit per request. Trade-off: a deactivated user keeps access for up to 15 minutes; refresh checks `isActive`.
 - **One serializer** (`appointmentDto.js`) is used by list, create, update and socket payloads, so the REST and real-time shapes can not drift.
 - **Uniform envelope** `{success, message, data, meta?}` / `{success:false, message, errors?}` produced by `apiResponse.js` and `errorHandler.js` only.
-- **Config is validated at boot** with zod (`config/env.js`); the process refuses to start with missing secrets.
+- **Config is validated at boot** with zod (`config/env.js`); the process refuses to start with missing secrets, or in production without a clinic time zone (`TZ`). Containers default to UTC, which would make "past slot" and "today" checks wrong by the clinic's UTC offset, and Node silently treats an unknown or wrongly-cased `TZ` as UTC, so boot also verifies that the process clock matches the zone's wall-clock time (summer and winter).
 - `createApp()` is separate from `server.js` so tests can mount the app without listening on a fixed port.
 
 ## 2. Schema design
